@@ -1,0 +1,20 @@
+= Testing node.js applications on OpenShift / Kubernetes
+
+Context - trying to understand how hawtio-online works and uses nginx and node.js/express on OpenShift.
+
+Started: 2024-12-05
+
+== Dev notes
+
+=== Initial setup
+
+1. Starting fresh and run `corepack use yarn` to get empty `package.json`
+2. Add manually `.yarnrc.yml`:
++
+----
+enableGlobalCache: false
+enableTelemetry: false
+nodeLinker: node-modules
+pnpEnableEsmLoader: false
+----
+3. `git commit`
