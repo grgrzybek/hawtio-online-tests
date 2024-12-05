@@ -2,6 +2,10 @@
 
 Context - trying to understand how hawtio-online works and uses nginx and node.js/express on OpenShift.
 
+Links:
+
+* /data/sources/_testing/grgr-test-web/patternfly-webpack/readme.adoc - yarn workspaces + TS + WebPack + esbuild
+
 Started: 2024-12-05
 
 == Dev notes
@@ -18,3 +22,41 @@ nodeLinker: node-modules
 pnpEnableEsmLoader: false
 ----
 3. `git commit`
+
+
+=== TypeScript
+
+Here are the levels of TS configuration:
+
+* `webpack` + `ts-loader`
+** https://www.typescriptlang.org/docs/handbook/integrating-with-build-tools.html#webpack
+** https://webpack.js.org/guides/typescript/
+* `webpack` + `swc-loader` (Rust-based) - 4x faster than `ts-loader`
+** https://swc.rs/docs/usage/swc-loader
+* `rspack` with `builtin:swc-loader` - 10x faster than `ts-loader`
+** https://rspack.dev/guide/features/builtin-swc-loader
+* `spact`/`swcpack` = swc without webpack
+** https://swc.rs/docs/configuration/bundling
+
+Basic usage - just with `typescript` npm package in dev dependencies
+
+----
+$(yarn bin tsc) --init
+----
+
+Let's treat the above as canonical version of `tsconfig.json`.
+
+https://www.typescriptlang.org/tsconfig is a documentation for option. Some are obvious, but some are not.
+
+* `module` - Sets the module system for the program. You very likely want `nodenext` for modern Node.js projects and `preserve` or `esnext` for code that will be bundled. - this is quite clear information.
+* `moduleResolution` - looks like `nodenext` or `bundler` are the only good choices.
+
+.Emitting
+
+Generally canonical usage of `$(yarn bin tsc)` should be used only to check the types. While the actual bundler uses the (same) configuration to do its own transpiling without type checking.
+
+Then how the `emit`, `declaration`, `outDir`, ... options work?
+
+.Using TypeScript through loader of the bundler
+
+Let's use https://rspack.dev[rspack].
