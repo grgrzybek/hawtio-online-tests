@@ -31,9 +31,12 @@ export const App: React.FunctionComponent = (): ReactNode => {
   }, [time])
 
   return (
-      <div>
-        TS: <span className="timer">{time}</span>
-      </div>
+      <>
+        <h1 className="main">Sample React Application</h1>
+        <div>
+          TS: <span className="timer">{time}</span>
+        </div>
+      </>
   )
 
 }

@@ -22,7 +22,7 @@
     "jsx": "react-jsx",
 
     /* Modules */
-    "module": "es2020",
+    "module": "es2022",
     "moduleResolution": "bundler",
 
     /* JavaScript Support */

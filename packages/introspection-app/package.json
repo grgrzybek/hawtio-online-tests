@@ -2,14 +2,24 @@
   "name": "@grgrzybek/hawtio-online-tests-app-introspection",
   "version": "1.0",
   "type": "module",
+  "scripts": {
+    "build": "rspack build",
+    "server": "rspack serve"
+  },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@rspack/cli": "^1.1.5",
+    "@rspack/core": "^1.1.5",
     "@types/react": "^18.3.13",
     "@types/react-dom": "^18.3.1",
-    "typescript": "^5.7.2"
+    "css-loader": "^7.1.2",
+    "file-loader": "^6.2.0",
+    "style-loader": "^4.0.0",
+    "typescript": "^5.7.2",
+    "webpack": "^5.81.0"
   },
   "packageManager": "yarn@4.5.3+sha512.3003a14012e2987072d244c720506549c1aab73ee728208f1b2580a9fd67b92d61ba6b08fe93f6dce68fd771e3af1e59a0afa28dd242dd0940d73b95fedd4e90"
 }

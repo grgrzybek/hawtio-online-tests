@@ -59,4 +59,5 @@ Then how the `emit`, `declaration`, `outDir`, ... options work?
 
 .Using TypeScript through loader of the bundler
 
-Let's use https://rspack.dev[rspack].
+We can use https://rspack.dev[rspack] which is Rust-based, webpack-compatible bundler.
+Using webpack is more canonical though.

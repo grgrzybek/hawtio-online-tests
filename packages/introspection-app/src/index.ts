@@ -13,26 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// this uses style-loader
 import "./index.css"
-// import "./bootstrap"
 import("./bootstrap")
-
-// this uses css-loader
-// import * as css from "./index.css"
-// console.info("CSS", css)
-
-// import * as rp from "module1/remoteplugin"
-// const rp = "Hello"
-
-// document.addEventListener("DOMContentLoaded", async () => {
-//   document.getElementById("app")!.innerHTML = `
-// <h1 class='main'>Patternfly + React + Webpack</h1>
-// <div><button id="load-plugin">Load dynamically</button></div>
-// <div id="for-plugin"></div>
-// `
-//   document.getElementById("load-plugin")!.addEventListener("click", async () => {
-//     const rp = await import("module1/remoteplugin")
-//     document.getElementById("for-plugin")!.innerHTML = JSON.stringify(rp.Plugin)
-//   })
-// })
