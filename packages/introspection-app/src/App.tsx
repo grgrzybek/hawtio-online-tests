@@ -13,29 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { ReactNode, useEffect, useState } from "react"
+import React, { ReactNode, useState } from "react"
 
 export const App: React.FunctionComponent = (): ReactNode => {
 
-  const [ time, setTime ] = useState(Math.floor(Date.now() / 1000))
+  const [ output, setOutput ] = useState("")
 
-  useEffect(() => {
-    const handle = window.setInterval(() => {
-      let ts = Math.floor(Date.now() / 1000)
-      // console.info("TS", ts)
-      setTime(ts)
-    }, 1000)
-    return () => {
-      window.clearInterval(handle)
-    }
-  }, [time])
+  const getEnv = () => {
+    fetch("http://localhost:3000/env")
+        .then(r => r.json())
+        .then(j => {
+          let v = "";
+          Object.keys(j).forEach(k => {
+            v += k + ": " + j[k] + "\n"
+          })
+          setOutput(v)
+        })
+  }
+
+  const getStatus = () => {
+    fetch("http://localhost:3000/status")
+        .then(r => r.json())
+        .then(j => {
+          setOutput(JSON.stringify(j))
+        })
+  }
 
   return (
       <>
-        <h1 className="main">Sample React Application</h1>
-        <div>
-          TS: <span className="timer">{time}</span>
+        <h1 className="main">Introspection App</h1>
+        <div className="controls">
+          <button id="get-env" onClick={getEnv}>Get Backend environment</button>
+          <button id="get-status" onClick={getStatus}>Get Status</button>
         </div>
+        <div className="display">{output}</div>
       </>
   )
 

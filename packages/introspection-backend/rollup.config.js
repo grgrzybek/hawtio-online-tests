@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-import { nodeResolve } from "@rollup/plugin-node-resolve"
+import resolve from "@rollup/plugin-node-resolve"
 import typescript from "@rollup/plugin-typescript"
+import commonjs from "@rollup/plugin-commonjs"
 import terser from "@rollup/plugin-terser"
+import json from "@rollup/plugin-json"
 
 const defaultOutput = {
   name: "Introspection",
   indent: false,
-  extend: true,
-  sourcemap: false
+  sourcemap: true
 }
 
 const config = {
   input: "src/main.ts",
-  plugins: [ nodeResolve(), typescript({ include: [ "src/*" ] }) ],
+  plugins: [ typescript({ include: [ "src/*" ] }), json(), resolve(), commonjs() ],
   output: [
     {
       ...defaultOutput,

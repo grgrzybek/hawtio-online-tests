@@ -35,6 +35,7 @@
 
     /* Interop Constraints */
     "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
 
     /* Type Checking */
