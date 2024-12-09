@@ -17,8 +17,10 @@
 import rspack from "@rspack/core"
 import path from "node:path"
 
+const mode = "development"
+
 const config = {
-  mode: "development",
+  mode: mode,
   target: "web",
   entry: {
     main: './src/index.ts',
@@ -30,7 +32,7 @@ const config = {
     extensions: [ ".ts", ".tsx", ".js" ]
   },
   output: {
-    clean: true,
+    clean: mode !== "development",
     path: path.resolve("./dist")
   },
   stats: {
@@ -81,9 +83,9 @@ const config = {
     })
   ],
   optimization: {
-    minimizer: [
+    minimizer: mode !== "development" ? [
       new rspack.LightningCssMinimizerRspackPlugin()
-    ]
+    ] : []
   },
 }
 

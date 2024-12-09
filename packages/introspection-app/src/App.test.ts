@@ -13,23 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-body {
-  background-color: white;
-  font-family: sans-serif;
-  font-size: 14px;
-  margin: 0;
-  padding: 0
-}
-h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-  padding: 0
-}
-h1.main {
-  color: #3a944a;
-}
-span.timer {
-  color: #e62d42;
-}
-#app {
-  padding: 0.5rem
-}
+import { describe, expect, test } from "@jest/globals"
+
+describe("Hawtio Online Tests", () => {
+
+  test("Jest infra test", () => {
+    expect(true).not.toBeFalsy();
+  })
+
+})
