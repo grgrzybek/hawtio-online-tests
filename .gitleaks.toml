@@ -14,7 +14,15 @@
 # limitations under the License.
 #
 
-enableGlobalCache: false
-enableTelemetry: false
-nodeLinker: node-modules
-pnpEnableEsmLoader: false
+[allowlist]
+description = "Global Allowlist"
+
+# Ignore based on any subset of the file path
+paths = [
+    # Ignore unencrypted private keys in sample nginx configuration
+    '''\/nginx\.rsa$'''
+]
+
+# Ignore based on any subset of the line
+regexes = [
+]
