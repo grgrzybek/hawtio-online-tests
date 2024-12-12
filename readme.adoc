@@ -148,3 +148,79 @@ Snapshots:   0 total
 Time:        1.031 s, estimated 2 s
 Ran all test suites.
 ----
+
+
+== Nginx
+
+Hawtio Online uses nginx to serve client-side application and nginx' configuration delegates some URIs to backend application (docker/gateway) based on Node.js and express.
+
+=== Running and configuring nginx
+
+`/etc/nginx/nginx.conf.default` and `/etc/nginx/nginx.conf` are considerably different, but I want some minimal config...
+
+Let's prepare some structure in `deploy/nginx`, try to run nginx and build minimal configuration file.
+
+----
+$ pwd
+/home/ggrzybek/sources/github.com/grgrzybek/hawtio-online-tests/deploy/nginx
+
+$ nginx
+nginx: [alert] could not open error log file: open() "/var/log/nginx/error.log" failed (13: Permission denied)
+2024/12/10 11:56:49 [warn] 47214#47214: the "user" directive makes sense only if the master process runs with super-user privileges, ignored in /etc/nginx/nginx.conf:5
+2024/12/10 11:56:49 [emerg] 47214#47214: mkdir() "/var/lib/nginx/tmp/client_body" failed (13: Permission denied)
+----
+
+----
+$ nginx -V 2>&1 | grep 'configure arguments' | tr ' ' '\n'
+configure
+arguments:
+--prefix=/usr/share/nginx
+--sbin-path=/usr/sbin/nginx
+--modules-path=/usr/lib64/nginx/modules
+--conf-path=/etc/nginx/nginx.conf
+--error-log-path=/var/log/nginx/error.log
+--http-log-path=/var/log/nginx/access.log
+--http-client-body-temp-path=/var/lib/nginx/tmp/client_body
+--http-proxy-temp-path=/var/lib/nginx/tmp/proxy
+--http-fastcgi-temp-path=/var/lib/nginx/tmp/fastcgi
+--http-uwsgi-temp-path=/var/lib/nginx/tmp/uwsgi
+--http-scgi-temp-path=/var/lib/nginx/tmp/scgi
+--pid-path=/run/nginx.pid
+--lock-path=/run/lock/subsys/nginx
+--user=nginx
+--group=nginx
+...
+----
+
+So we need to override the above.
+
+With empty etc/nginx.nginx.conf:
+
+----
+$ nginx -p $(pwd) -c etc/nginx/nginx.conf  -e var/log/nginx/error.log
+nginx: [emerg] no "events" section in configuration
+----
+
+This works with `nginx.conf` containing only `events {}` configuration:
+
+----
+$ nginx -p $(pwd) -c etc/nginx/nginx.conf  -e var/log/nginx/error.log -g 'pid run/nginx.pid;'
+
+$ pgrep -af nginx
+49449 nginx: master process nginx -p /home/ggrzybek/sources/github.com/grgrzybek/hawtio-online-tests/deploy/nginx -c etc/nginx/nginx.conf -e var/log/nginx/error.log -g pid run/nginx.pid;
+49450 nginx: worker process
+
+$ nginx -p $(pwd) -c etc/nginx/nginx.conf  -e var/log/nginx/error.log -g 'pid run/nginx.pid;' -s stop
+
+$ pgrep -af nginx | wc -l
+0
+----
+
+`pid` option can be specified in config file, but `-e` (`error_log`) has to be specified, because it's needed even before reading config file. Special `-e stderr` can be used.
+
+So with correct configuration it's easiest to run:
+----
+$ nginx -p $(pwd) -c etc/nginx/nginx.conf -e stderr
+----
+
+Configuration can be generated using amazing https://nginxconfig.io page (https://do.nginxconfig.io, https://github.com/digitalocean/nginxconfig.io).

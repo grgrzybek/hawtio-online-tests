@@ -26,6 +26,10 @@ const server = express()
 server.use(helmet())
 server.use(cors())
 
+server.get('/*', (req, _res, next) => {
+  console.log(req.headers)
+  next()
+})
 server.get('/status', (_req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.status(200).json({ port: port })

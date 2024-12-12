@@ -18,16 +18,22 @@ import React, { ReactNode, useState } from "react"
 export const App: React.FunctionComponent = (): ReactNode => {
 
   const [ output, setOutput ] = useState("")
+  const [ error, setError ] = useState(false)
 
   const getEnv = () => {
-    fetch("http://localhost:3000/env")
+    fetch("http://localhost:3000/env", { cache: "no-cache", headers: { "Cache-Control": "no-cache" } })
         .then(r => r.json())
         .then(j => {
           let v = "";
           Object.keys(j).forEach(k => {
             v += k + ": " + j[k] + "\n"
           })
+          setError(false)
           setOutput(v)
+        })
+        .catch(e => {
+          setError(true)
+          setOutput(e instanceof Error ? e.message : (e ? e.toString : "error occurred"))
         })
   }
 
@@ -35,7 +41,12 @@ export const App: React.FunctionComponent = (): ReactNode => {
     fetch("http://localhost:3000/status")
         .then(r => r.json())
         .then(j => {
+          setError(false)
           setOutput(JSON.stringify(j))
+        })
+        .catch(e => {
+          setError(true)
+          setOutput(e instanceof Error ? e.message : (e ? e.toString : "error occurred"))
         })
   }
 
@@ -46,7 +57,7 @@ export const App: React.FunctionComponent = (): ReactNode => {
           <button id="get-env" onClick={getEnv}>Get Backend environment</button>
           <button id="get-status" onClick={getStatus}>Get Status</button>
         </div>
-        <div className="display">{output}</div>
+        <div className={error ? "display error" : "display"}>{output}</div>
       </>
   )
 

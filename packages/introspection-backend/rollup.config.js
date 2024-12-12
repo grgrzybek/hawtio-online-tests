@@ -28,7 +28,7 @@ const defaultOutput = {
 
 const config = {
   input: "src/main.ts",
-  plugins: [ typescript({ include: [ "src/*" ] }), json(), resolve(), commonjs() ],
+  plugins: [ typescript({ include: [ "src/*" ] }), json(), resolve({ preferBuiltins: true }), commonjs() ],
   output: [
     {
       ...defaultOutput,

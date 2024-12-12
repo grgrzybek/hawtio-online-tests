@@ -51,3 +51,6 @@ div.display {
   min-height: 1em;
   white-space: pre;
 }
+div.display.error {
+  color: #e62d42;
+}
