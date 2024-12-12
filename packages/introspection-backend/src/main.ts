@@ -47,3 +47,8 @@ server.get('/env', (_req, res) => {
 server.listen(port, "0.0.0.0", () => {
   console.info(`Listening at http://localhost:${port}`)
 })
+
+process.on('SIGINT', () => {
+  console.info("Introspection Backend stopping...")
+  process.exit(0)
+})

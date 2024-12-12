@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: hawtio-online-tests
+  name: hawtio-online-tests
+  namespace: hawtio
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 4
+  selector:
+    matchLabels:
+      app: hawtio-online-tests
+  # https://docs.openshift.com/container-platform/4.17/rest_api/workloads_apis/deployment-apps-v1.html#spec-strategy
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        # needed to make "containers/image" reference image streams instead of images
+        alpha.image.policy.openshift.io/resolve-names: '*'
+      labels:
+        app: hawtio-online-tests
+    spec:
+      # https://docs.openshift.com/container-platform/4.17/rest_api/workloads_apis/pod-v1.html#spec-containers-2
+      # https://docs.openshift.com/container-platform/4.17/openshift_images/image-streams-manage.html
+      # > When you define an object that references an image stream tag, such as a build or deployment configuration,
+      # > you point to an image stream tag and not the repository
+      containers:
+        #- image: everfree.forest:5000/ggrzybek/hawtio-online-tests-introspection-backend:1.0-1
+        - image: hawtio-online-tests-introspection-backend:latest
+          imagePullPolicy: IfNotPresent
+          name: hawtio-online-tests-introspection-backend
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

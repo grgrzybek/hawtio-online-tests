@@ -1,0 +1,11 @@
+FROM registry.redhat.io/rhel9/nodejs-22:9.5
+
+# https://developers.redhat.com/articles/build-your-first-application-using-nodejs-red-hat-container-development-kit-cdk#3__build_hello_world_in_a_container
+# this dir is the working dir:
+# "com.redhat.deployments-dir": "/opt/app-root/src"
+# $ podman inspect 91bf7db9140b94b289d8bfd79c09d847333a02d3bb11f4f34874d9f569b5e409 | jq -r .[].Config.WorkingDir
+#  #/opt/app-root/src
+
+COPY dist/* /opt/app-root/src
+
+CMD ["node", "./main.min.cjs"]
