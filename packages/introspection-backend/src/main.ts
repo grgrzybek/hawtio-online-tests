@@ -17,26 +17,27 @@
 import cors from "cors"
 import express from "express"
 import helmet from "helmet"
+import { exec, ExecException } from "node:child_process"
 
 console.info("Introspection Backend starting...")
 
 const port = 3000
-const server = express()
+const app = express()
 
-server.use(helmet())
-server.use(cors())
+app.use(helmet())
+app.use(cors())
 
-server.get('/*', (req, _res, next) => {
+app.get("/*", (req, _res, next) => {
   console.log(req.headers)
   next()
 })
-server.get('/status', (_req, res) => {
-  res.setHeader('Content-Type', 'application/json')
+app.get("/status", (_req, res) => {
+  res.setHeader("Content-Type", "application/json")
   res.status(200).json({ port: port })
 })
 
-server.get('/env', (_req, res) => {
-  res.setHeader('Content-Type', 'application/json')
+app.get("/env", (_req, res) => {
+  res.setHeader("Content-Type", "application/json")
   const r: Record<string, string> = {};
   Object.keys(process.env).sort().forEach((v) => {
     r[v] = process.env[v]!
@@ -44,11 +45,48 @@ server.get('/env', (_req, res) => {
   res.status(200).json(r)
 })
 
-server.listen(port, "0.0.0.0", () => {
-  console.info(`Listening at http://localhost:${port}`)
+app.get("/netinfo", (_req, res) => {
+  res.setHeader("Content-Type", "text/plain")
+  exec("ip a", (error: ExecException | null, stdout: string, _stderr: string) => {
+    if (error) {
+      res.status(200).send(error.message)
+    } else {
+      res.status(200).send(stdout)
+    }
+  })
 })
 
-process.on('SIGINT', () => {
-  console.info("Introspection Backend stopping...")
-  process.exit(0)
+app.get("/ss", (_req, res) => {
+  res.setHeader("Content-Type", "text/plain")
+  exec("ss -lnpa", (error: ExecException | null, stdout: string, _stderr: string) => {
+    if (error) {
+      res.status(200).send(error.message)
+    } else {
+      res.status(200).send(stdout)
+    }
+  })
 })
+
+const server = app.listen(port, "0.0.0.0", () => {
+  console.info(`Listening at http://localhost:${port}`)
+  console.info("PID", process.pid)
+})
+
+process.on("SIGINT", cleanup)
+process.on("SIGTERM", cleanup)
+
+function cleanup() {
+  console.info("Introspection Backend stopping...")
+  // https://nodejs.org/api/net.html#serverclosecallback
+  server.close((error?: Error) => {
+    if (error) {
+      if (error.message) {
+        console.warn("Problem shutting down express", error.message)
+      } else {
+        console.warn("Problem shutting down express", error.name)
+      }
+    }
+    console.info("Introspection Backend stopped")
+    process.exit(0)
+  })
+}

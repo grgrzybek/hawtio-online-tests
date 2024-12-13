@@ -21,7 +21,7 @@ export const App: React.FunctionComponent = (): ReactNode => {
   const [ error, setError ] = useState(false)
 
   const getEnv = () => {
-    fetch("http://localhost:3000/env", { cache: "no-cache", headers: { "Cache-Control": "no-cache" } })
+    fetch("/management/env", { cache: "no-cache", headers: { "Cache-Control": "no-cache" } })
         .then(r => r.json())
         .then(j => {
           let v = "";
@@ -38,7 +38,7 @@ export const App: React.FunctionComponent = (): ReactNode => {
   }
 
   const getStatus = () => {
-    fetch("http://localhost:3000/status")
+    fetch("/management/status")
         .then(r => r.json())
         .then(j => {
           setError(false)
@@ -50,12 +50,26 @@ export const App: React.FunctionComponent = (): ReactNode => {
         })
   }
 
+  const getNetInfo = () => {
+    fetch("/management/netinfo")
+        .then(r => r.text())
+        .then(j => {
+          setError(false)
+          setOutput(j)
+        })
+        .catch(e => {
+          setError(true)
+          setOutput(e instanceof Error ? e.message : (e ? e.toString : "error occurred"))
+        })
+  }
+
   return (
       <>
         <h1 className="main">Introspection App</h1>
         <div className="controls">
-          <button id="get-env" onClick={getEnv}>Get Backend environment</button>
+          <button id="get-env" onClick={getEnv}>Get Backend Environment</button>
           <button id="get-status" onClick={getStatus}>Get Status</button>
+          <button id="get-netinfo" onClick={getNetInfo}>Get Net Information</button>
         </div>
         <div className={error ? "display error" : "display"}>{output}</div>
       </>

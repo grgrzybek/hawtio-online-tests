@@ -3,6 +3,25 @@ kind: Deployment
 metadata:
   labels:
     app: hawtio-online-tests
+  annotations:
+    deployment.kubernetes.io/revision: "5"
+    image.openshift.io/triggers: |
+      [
+        {
+          "from": {
+            "kind": "ImageStreamTag",
+            "name": "hawtio-online-tests-introspection-app:latest"
+          },
+          "fieldPath": "spec.template.spec.containers[?(@.name==\"hawtio-online-tests-introspection-app\")].image"
+        },
+        {
+          "from": {
+            "kind": "ImageStreamTag",
+            "name": "hawtio-online-tests-introspection-backend:latest"
+          },
+          "fieldPath": "spec.template.spec.containers[?(@.name==\"hawtio-online-tests-introspection-backend\")].image"
+        }
+      ]
   name: hawtio-online-tests
   namespace: hawtio
 spec:
@@ -33,11 +52,28 @@ spec:
       containers:
         #- image: everfree.forest:5000/ggrzybek/hawtio-online-tests-introspection-backend:1.0-1
         - image: hawtio-online-tests-introspection-backend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: hawtio-online-tests-introspection-backend
           resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+              name: express
+        - image: hawtio-online-tests-introspection-app:latest
+          imagePullPolicy: Always
+          name: hawtio-online-tests-introspection-app
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+              name: nginx
+            - containerPort: 8043
+              protocol: TCP
+              name: nginx-secure
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler

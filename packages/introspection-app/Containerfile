@@ -1,0 +1,16 @@
+FROM registry.redhat.io/rhel9/nginx-124:9.5
+
+USER root
+COPY nginx/etc/nginx.conf "${NGINX_CONF_PATH}"
+COPY nginx/etc/nginx.rsa /opt/app-root/etc
+COPY nginx/etc/nginx.cer /opt/app-root/etc
+
+COPY dist/* /opt/app-root/src
+
+RUN chown default:root /opt/app-root/etc/nginx.rsa
+RUN chown default:root /opt/app-root/etc/nginx.cer
+RUN chmod 644 /opt/app-root/etc/nginx.rsa
+RUN chmod 644 /opt/app-root/etc/nginx.cer
+
+USER default
+CMD ["nginx"]
